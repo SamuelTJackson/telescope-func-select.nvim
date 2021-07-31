@@ -83,23 +83,24 @@ local function list(opts)
             local bufnr = vim.api.nvim_win_get_buf(windowid)
             local buf_name = vim.api.nvim_buf_get_name(bufnr)
 
-            tab.tabnr = tabnr
-            tab.tabidx = tabidx
-            tab.windownr = windownr
-            tab.windowid = windowid
+            if buf_name ~= "" then
+                tab.tabnr = tabnr
+                tab.tabidx = tabidx
+                tab.windownr = windownr
+                tab.windowid = windowid
 
-            if not string.find(buf_name, "NvimTree") then
-                tab.windows_count = tab.windows_count + 1
-                local file_name = get_filename(buf_name)
-                local file_extension = get_file_extension(buf_name)
-                local file_icon = icons.get_icon(file_name, file_extension)
-                if file_icon then
-                    table.insert(tab.windows, file_icon .. " " .. file_name)
-                else
-                    table.insert(tab.windows, "  " .. file_name)
+                if not string.find(buf_name, "NvimTree") then
+                    tab.windows_count = tab.windows_count + 1
+                    local file_name = get_filename(buf_name)
+                    local file_extension = get_file_extension(buf_name)
+                    local file_icon = icons.get_icon(file_name, file_extension)
+                    if file_icon then
+                        table.insert(tab.windows, file_icon .. " " .. file_name)
+                    else
+                        table.insert(tab.windows, "  " .. file_name)
+                    end
                 end
             end
-
         end
         table.insert(tabs, tab)
     end
