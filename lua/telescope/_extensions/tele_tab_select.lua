@@ -19,6 +19,18 @@ local function goto_window(prompt_bufnr)
     vim.api.nvim_set_current_tabpage(entry.tabnr)
 end
 
+local function delete_tab(prompt_bufnr)
+    local entry = action_state.get_selected_entry()
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    local windows = vim.api.nvim_tabpage_list_wins(entry.tabnr)
+    for windownr, windowid in ipairs(windows) do
+        vim.api.nvim_win_close(windowid, false)
+    end
+    current_picker:delete_selection(function(selection)
+    end
+    )
+end
+
 local function get_filename(path)
     return path:match("([^/]+)$")
 end
@@ -39,14 +51,14 @@ local function make_entry()
         }
     end
 
+
     return function(entry)
         return {
             valid = true,
             path_start = entry.path_start,
 
             display = make_display,
-            ordinal = "Tab: " .. entry.tabidx .. " : " .. entry.windows_count ..
-                " window(s)",
+            ordinal = "Tab: " .. entry.tabidx .. " : " .. entry.windows_count .." window(s)",
             tabnr = entry.tabnr,
             windows_count = entry.windows_count,
             windows = entry.windows
@@ -129,6 +141,8 @@ local function list(opts)
             -- use our custom action to go the window id
             map('i', '<CR>', goto_window)
             map('n', '<CR>', goto_window)
+            map('n', '<c-d>', delete_tab)
+            map('i', '<c-d>', delete_tab)
             return true
         end
     }):find()
