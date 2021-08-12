@@ -26,18 +26,12 @@ local function delete_tab(prompt_bufnr)
     for windownr, windowid in ipairs(windows) do
         vim.api.nvim_win_close(windowid, false)
     end
-    current_picker:delete_selection(function(selection)
-    end
-    )
+    current_picker:delete_selection(function(selection) end)
 end
 
-local function get_filename(path)
-    return path:match("([^/]+)$")
-end
+local function get_filename(path) return path:match("([^/]+)$") end
 
-local function get_file_extension(path)
-    return path:match("[^.]+$")
-end
+local function get_file_extension(path) return path:match("[^.]+$") end
 
 local function make_entry()
     local make_display = function(entry)
@@ -46,19 +40,31 @@ local function make_entry()
             separator = "",
             items = {{width = 10}, {width = 15}}
         }
+        local tabnr = ""
+        if entry.tabnr == nil then
+            tabnr = "-"
+        else
+            tabnr = entry.tabnr
+        end
         return displayer {
-            {"Tab: " .. entry.tabnr}, {entry.windows_count .. " window(s)"}
+            {"Tab: " .. tabnr}, {entry.windows_count .. " window(s)"}
         }
     end
 
-
     return function(entry)
+        local tabidx = ""
+        if entry.tabidx == nil then
+            tabidx = "No Name"
+        else
+            tabidx = entry.tabidx
+        end
         return {
             valid = true,
             path_start = entry.path_start,
 
             display = make_display,
-            ordinal = "Tab: " .. entry.tabidx .. " : " .. entry.windows_count .." window(s)",
+            ordinal = "Tab: " .. tabidx .. " : " .. entry.windows_count ..
+                " window(s)",
             tabnr = entry.tabnr,
             windows_count = entry.windows_count,
             windows = entry.windows
@@ -74,11 +80,7 @@ local function preview_function()
     end
 end
 
-local function preview_title()
-    return function()
-        return "Files"
-    end
-end
+local function preview_title() return function() return "Files" end end
 
 local function list(opts)
     opts = opts or {}
