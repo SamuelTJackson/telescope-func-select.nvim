@@ -11,5 +11,4 @@ A tab switcher extension for Telescope with information about each tab's windows
 
 ## Exports
 
-`teletabby.list`
 - `require('telescope').extensions.tele_tab_select.list()`

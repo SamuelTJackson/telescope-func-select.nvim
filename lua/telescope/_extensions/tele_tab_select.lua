@@ -3,8 +3,8 @@ if not has_telescope then
     error('This plugins requires nvim-telescope/telescope.nvim')
 end
 
+local vim = vim
 local actions = require('telescope.actions')
-local state = require('telescope.state')
 local action_state = require('telescope.actions.state')
 local finders = require('telescope.finders')
 local pickers = require('telescope.pickers')
@@ -23,32 +23,32 @@ local function delete_tab(prompt_bufnr)
     local entry = action_state.get_selected_entry()
     local current_picker = action_state.get_current_picker(prompt_bufnr)
     local windows = vim.api.nvim_tabpage_list_wins(entry.tabnr)
-    for windownr, windowid in ipairs(windows) do
+    for _, windowid in ipairs(windows) do
         vim.api.nvim_win_close(windowid, false)
     end
-    current_picker:delete_selection(function(selection) end)
+    current_picker:delete_selection(function(selection)
+    end)
 end
 
-local function get_filename(path) return path:match("([^/]+)$") end
+local function get_filename(path)
+    return path:match("([^/]+)$")
+end
 
-local function get_file_extension(path) return path:match("[^.]+$") end
+local function get_file_extension(path)
+    return path:match("[^.]+$")
+end
 
 local function make_entry()
     local make_display = function(entry)
 
-        local displayer = entry_display.create {
-            separator = "",
-            items = {{width = 10}, {width = 15}}
-        }
+        local displayer = entry_display.create {separator = "", items = {{width = 10}, {width = 15}}}
         local tabnr = ""
         if entry.tabnr == nil then
             tabnr = "-"
         else
             tabnr = entry.tabnr
         end
-        return displayer {
-            {"Tab: " .. tabnr}, {entry.windows_count .. " window(s)"}
-        }
+        return displayer {{"Tab: " .. tabnr}, {entry.windows_count .. " window(s)"}}
     end
 
     return function(entry)
@@ -63,8 +63,7 @@ local function make_entry()
             path_start = entry.path_start,
 
             display = make_display,
-            ordinal = "Tab: " .. tabidx .. " : " .. entry.windows_count ..
-                " window(s)",
+            ordinal = "Tab: " .. tabidx .. " : " .. entry.windows_count .. " window(s)",
             tabnr = entry.tabnr,
             windows_count = entry.windows_count,
             windows = entry.windows
@@ -80,7 +79,11 @@ local function preview_function()
     end
 end
 
-local function preview_title() return function() return "Files" end end
+local function preview_title()
+    return function()
+        return "Files"
+    end
+end
 
 local function list(opts)
     opts = opts or {}
@@ -130,17 +133,10 @@ local function list(opts)
     }
     pickers.new(opts, {
         prompt_title = 'Tabs',
-        finder = finders.new_table {
-            results = tabs,
-            entry_maker = opts.entry_maker or make_entry()
-        },
-        previewer = Previewer:new{
-            title = preview_title(),
-            preview_fn = preview_function()
-        },
+        finder = finders.new_table {results = tabs, entry_maker = opts.entry_maker or make_entry()},
+        previewer = Previewer:new{title = preview_title(), preview_fn = preview_function()},
         sorter = sorters.get_fzy_sorter(opts),
         attach_mappings = function(_, map)
-            -- use our custom action to go the window id
             map('i', '<CR>', goto_window)
             map('n', '<CR>', goto_window)
             map('n', '<c-d>', delete_tab)
