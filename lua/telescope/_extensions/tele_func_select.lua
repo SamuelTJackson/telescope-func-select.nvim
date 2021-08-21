@@ -39,7 +39,7 @@ local function list(opts)
     local functions = {}
 
     for i, line in ipairs(buffer) do
-        if string.find(line, "func") then
+        if line:sub(1, 4) == "func" then
             table.insert(functions, {name = line:sub(1, -3), line_number = i})
         end
     end
