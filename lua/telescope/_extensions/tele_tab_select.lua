@@ -48,7 +48,7 @@ local function list(opts)
     opts.layout_config = {
         center = {preview_cutoff = 0},
         cursor = {preview_cutoff = 0},
-        height = 0.2,
+        height = 0.8,
         horizontal = {preview_cutoff = 10, prompt_position = "bottom"},
         vertical = {preview_cutoff = 0},
         width = 0.8
